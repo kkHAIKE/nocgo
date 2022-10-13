@@ -220,15 +220,18 @@ func (aa *archArm64) WriteProg(w io.Writer, p *Prog) error {
 	}
 	aa.alignOff = sz + pad
 
-	if _, err := w.Write([]byte("\n")); err != nil {
-		return err
-	}
 	for i := int64(0); i < pad/4; i++ {
-		if _, err := w.Write([]byte("\tNOOP\n")); err != nil {
+		if i%8 == 0 {
+			if _, err := w.Write([]byte("\n\t")); err != nil {
+				return err
+			}
+		}
+
+		if _, err := w.Write([]byte("NOOP;")); err != nil {
 			return err
 		}
 	}
-	if _, err := w.Write([]byte("\n")); err != nil {
+	if _, err := w.Write([]byte("\n\n")); err != nil {
 		return err
 	}
 
