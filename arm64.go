@@ -123,9 +123,12 @@ func (aa *archArm64) bytes(w io.Writer, data []byte, comment string) (_ []byte, 
 	flag := comment == ""
 	for len(data) >= 4 {
 		switch {
-		case len(data) >= 8:
-			_, err = fmt.Fprintf(w, "\tDWORD $0x%x", binary.LittleEndian.Uint64(data[:8]))
-			data = data[8:]
+		// disable because
+		// 1. cause align padding, (WORD PAD DWORD)
+		// 2. operand must be great than 2^32
+		// case len(data) >= 8:
+		// 	_, err = fmt.Fprintf(w, "\tDWORD $0x%x", binary.LittleEndian.Uint64(data[:8]))
+		// 	data = data[8:]
 		case len(data) >= 4:
 			_, err = fmt.Fprintf(w, "\tWORD $0x%x", binary.LittleEndian.Uint32(data[:4]))
 			data = data[4:]
