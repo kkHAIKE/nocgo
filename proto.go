@@ -22,12 +22,20 @@ type Function struct {
 }
 
 func (f *Function) ArgsSize() (ret int) {
+	add := func(sz int, align bool) {
+		ret = (ret + sz - 1) &^ (sz - 1)
+		if !align {
+			ret += sz
+		}
+	}
 	for _, v := range f.Args {
-		ret += v.Size
+		add(v.Size, false)
 	}
+	add(8, true)
 	if f.Ret != nil {
-		ret += f.Ret.Size
+		add(f.Ret.Size, false)
 	}
+	add(8, true)
 	return
 }
 

@@ -327,7 +327,7 @@ _entry:
 	var ri, fi, soff int
 	nextOff := func(sz int) (r int) {
 		r = (soff + sz - 1) &^ (sz - 1)
-		soff += sz
+		soff = r + sz
 		return
 	}
 	nextReg := func(fp bool) string {
