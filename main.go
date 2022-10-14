@@ -70,20 +70,20 @@ func (lbl *Label) Bind(bb *BasicBlock) {
 
 type LabelOperand struct {
 	lbl  *Label
-	oper func(int64, int64) int64
+	oper func(int64) int64
 }
 
 func newLabelOperand(name string, getLabel func(name string) *Label) LabelOperand {
-	var oper func(int64, int64) int64
+	var oper func(int64) int64
 	switch {
 	case strings.HasSuffix(name, "@PAGE"):
 		name = name[:len(name)-5]
-		oper = func(x, i int64) int64 { return (x &^ 4095) - (i &^ 4095) }
+		oper = func(x int64) int64 { return x &^ 4095 }
 	case strings.HasSuffix(name, "@PAGEOFF"):
 		name = name[:len(name)-8]
-		oper = func(x, i int64) int64 { return x & 4095 }
+		oper = func(x int64) int64 { return x & 4095 }
 	default:
-		oper = func(x, i int64) int64 { return x }
+		oper = func(x int64) int64 { return x }
 	}
 	return LabelOperand{
 		lbl:  getLabel(name),
@@ -91,11 +91,11 @@ func newLabelOperand(name string, getLabel func(name string) *Label) LabelOperan
 	}
 }
 
-func (o LabelOperand) EA(iaddr int64) int64 {
+func (o LabelOperand) EA() int64 {
 	if o.BB() == nil {
 		return -1
 	}
-	return o.oper(o.BB().EA(), iaddr)
+	return o.oper(o.BB().EA())
 }
 
 func (o LabelOperand) BB() *BasicBlock {

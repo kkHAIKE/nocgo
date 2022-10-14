@@ -97,10 +97,10 @@ type instrLabel struct {
 func (ins instrLabel) Operands() string {
 	arr := make([]interface{}, len(ins.los))
 	for i, v := range ins.los {
-		if v.EA(ins.ea) == -1 {
+		if v.EA() == -1 {
 			arr[i] = ins.stub
 		} else {
-			arr[i] = v.EA(ins.ea)
+			arr[i] = v.EA()
 		}
 	}
 	return fmt.Sprintf(ins.opers, arr...)
@@ -109,7 +109,7 @@ func (ins instrLabel) Operands() string {
 func (ins instrLabel) Rebuild() (dif int64, err error) {
 	// check
 	for _, v := range ins.los {
-		if v.EA(ins.ea) == -1 {
+		if v.EA() == -1 {
 			err = fmt.Errorf("nil label: %s", v.ID())
 			return
 		}
